@@ -50,8 +50,3 @@ class Scores(object):
     def reset_score(self):
         """ method resets score """
         self.curr_score = 0
-
-if __name__ == "__main__":
-    run = Scores()
-    print len(run.get_top_ten_scores())
-
