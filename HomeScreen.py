@@ -7,7 +7,7 @@ description:
 '''
 from __future__ import print_function
 import pygame
-
+import game
 
 BUTTON_COLOR = (163, 40, 55)
 BUTTON_HOVER = (220, 40, 55)
@@ -28,6 +28,8 @@ class HomeScreen():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                #elif event.type == pygame.MOUSEBUTTONDOWN:
+                   # click_sound.play()
 
             
             Add_Background(self.screen)
@@ -42,15 +44,20 @@ class HomeScreen():
 
 def Button_Play():
 	print("button play clicked")
+	click_sound.play()
+	game.init()
 
 def Button_Levels():
 	print("button levels clicked")
+	click_sound.play()
 
 def Button_Extreme():
 	print("button extreme clicked")
+	click_sound.play()
 
 def Button_Scores():
 	print("button scores clicked")
+	click_sound.play()
 
 def Button_Exit():
     pygame.quit()
@@ -91,7 +98,6 @@ def Add_Buttons(screen):
     if CENTER_SCREEN - 75 < mouse[0] < CENTER_SCREEN + 75 and 700 < mouse[1] < 750:
         pygame.draw.rect(screen, BUTTON_HOVER, (CENTER_SCREEN - 75, 700, 150, 50))
         if release[0] == 1:
-        	sounds[1].play()
         	Button_Exit()
     else:
         pygame.draw.rect(screen, BUTTON_COLOR, (CENTER_SCREEN - 75, 700, 150, 50))
@@ -125,15 +131,11 @@ if __name__ == "__main__":
     pygame.mixer.init()
     pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
+    click_sound = pygame.mixer.Sound("res/beep5.mps")
+
     pygame.mixer.music.load("res/background_music.mp3")
     pygame.mixer.music.set_volume(1)
     pygame.mixer.music.play(-1)
-    #sounds = []
-    #sounds.append(pygame.mixer.Sound("res/background_music.mp3"))
-    #sounds.append(pygame.mixer.Sound("res/beep23.mp3"))
-    #sounds[0].play()
-    #for sound in sounds:
-    #	sound.play()
     size = (WIDTH, HEIGHT)
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("BRICK BREAKER")
