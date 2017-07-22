@@ -1,5 +1,5 @@
 '''
-module @home_screen.py
+module @HomeScreen.py
 description:
  This will serve as the main module for the game
  All the game sequences and parts will be loaded through
@@ -91,6 +91,7 @@ def Add_Buttons(screen):
     if CENTER_SCREEN - 75 < mouse[0] < CENTER_SCREEN + 75 and 700 < mouse[1] < 750:
         pygame.draw.rect(screen, BUTTON_HOVER, (CENTER_SCREEN - 75, 700, 150, 50))
         if release[0] == 1:
+        	sounds[1].play()
         	Button_Exit()
     else:
         pygame.draw.rect(screen, BUTTON_COLOR, (CENTER_SCREEN - 75, 700, 150, 50))
@@ -121,10 +122,21 @@ def Add_Background(screen):
 
 
 if __name__ == "__main__":
+    pygame.mixer.init()
+    pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
+    pygame.mixer.music.load("res/background_music.mp3")
+    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.play(-1)
+    #sounds = []
+    #sounds.append(pygame.mixer.Sound("res/background_music.mp3"))
+    #sounds.append(pygame.mixer.Sound("res/beep23.mp3"))
+    #sounds[0].play()
+    #for sound in sounds:
+    #	sound.play()
     size = (WIDTH, HEIGHT)
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("BRICK BREAKER")
-    main_background = pygame.image.load("res/background_main.jpg").convert()
+    main_background = pygame.image.load("res/background_main.jpg").convert() #load background image
     game = HomeScreen(screen)
     game.run()
