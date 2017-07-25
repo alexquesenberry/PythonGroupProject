@@ -17,7 +17,6 @@ BUTTON_TEXT_COLOR = (26, 255, 26)
 WIDTH = 600
 HEIGHT = 800
 CENTER_SCREEN = (WIDTH / 2)
-global screen
 
 
 
@@ -61,8 +60,8 @@ class HomeScreen(object):
     def Button_Play(self):
         print("button play clicked")
         click_sound.play()
+	game.init(WIDTH, HEIGHT)
 	game.run(screen)
-	
 
 
     def Button_Levels(self):
@@ -138,7 +137,7 @@ class HomeScreen(object):
     #END ADD_TEXT_BUTTONS
 
     def Add_Title(self):
-       	myfont = pygame.font.Font("res/FFF_font.ttf", 88)
+        myfont = pygame.font.Font("res/FFF_font.ttf", 88)
         label = myfont.render("BrickBreaker", 1, BUTTON_TEXT_COLOR)
         self.screen.blit(label, (1, 50))
 
@@ -153,9 +152,7 @@ class HomeScreen(object):
 if __name__ == "__main__":
     pygame.mixer.init()
     pygame.mixer.pre_init(44100, -16, 2, 2048)
-    #pygame.init()
-    game.init(WIDTH, HEIGHT)
-    
+    pygame.init()
     click_sound = pygame.mixer.Sound("res/beep5.mps")
     pygame.mixer.music.load("res/background_music.mp3")
     pygame.mixer.music.set_volume(1)
@@ -166,4 +163,4 @@ if __name__ == "__main__":
     main_background = pygame.image.load("res/background_main.jpg").convert() #load background image
     home = HomeScreen(screen)
     level = LevelScreen(screen)
-home.run()
+    home.run()
