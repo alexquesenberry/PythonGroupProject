@@ -5,6 +5,7 @@ import random
 import pygame, sys
 import math
 import bb_objs
+from brick import Brick
 from pygame.locals import *
 
 #pygame.init()
@@ -39,9 +40,15 @@ def init(width, height):
 	global BALL_RADIUS, PAD_WIDTH, PAD_HEIGHT
 	global WIDTH, HEIGHT
 	global debug
+	global bricks
+	global BRICK_WIDTH, BRICK_HEIGHT
 
 	WIDTH = width
 	HEIGHT = height
+
+	bricks = []
+	BRICK_WIDTH = 80
+	BRICK_HEIGHT = 30
 
 	debug = False
 
@@ -56,6 +63,7 @@ def init(width, height):
 	pad = bb_objs.paddle(WIDTH/2, HEIGHT-HEIGHT/15, WIDTH/10, HEIGHT/50, GREEN)
 	score = 0
 	ball_init()
+	init_bricks(5)
 	#run()
 
 def run(window):
@@ -88,7 +96,18 @@ def ball_init():
 	balls.append(bb_objs.ball(WIDTH/2, HEIGHT/2, init_vel, PAD_WIDTH/15, SILVER))
 	#balls.append(bb_objs.ball(WIDTH/4,  HEIGHT-HEIGHT/15, init_vel, PAD_WIDTH/15, SILVER))	#Test Ball
 	
-	
+def init_bricks(colmns):
+	"""
+	pass in the number of columns
+	you want initially drawn		
+	"""
+	rows = (WIDTH - 2 * WIDTH / 10) / BRICK_WIDTH
+	x_offset = WIDTH / 10
+	y_offset = HEIGHT / 7
+
+	for i in range(0, colmns):
+		for j in range(0, rows):
+			bricks.append(Brick(3, [j * 80 + x_offset, i * 30 + y_offset], [WIDTH, HEIGHT]))
 
 def keydown(event):
 	global pad
@@ -133,6 +152,10 @@ def draw(canvas):
 	pygame.draw.line(canvas, RED, [WIDTH, 0], [WIDTH, HEIGHT], WIDTH/10) #right
 	pygame.draw.line(canvas, RED, [0, 0], [0, HEIGHT], WIDTH/10) #left
 	pygame.draw.line(canvas, RED, [0, 0], [WIDTH, 0], HEIGHT/5) #top
+
+	#draws the bricks
+	for brck in bricks:
+		brck.draw_brick(canvas)
 
 	# Draws Paddle
 	pygame.draw.polygon(canvas, GREEN, [	[pad.pos[0] - PAD_WIDTH/2, pad.pos[1] - PAD_HEIGHT/2], 
