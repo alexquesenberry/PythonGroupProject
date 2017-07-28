@@ -22,6 +22,7 @@ YELLOW = (237, 249, 57)
 PURPLE = (189, 26, 221)
 
 
+CLOCK = pygame.time.Clock()
 
 #BALL_RADIUS = math.sqrt(WIDTH*HEIGHT)
 #PAD_WIDTH = WIDTH/10
@@ -46,6 +47,8 @@ def init(width, height):
 	WIDTH = width
 	HEIGHT = height
 
+
+
 	bricks = []
 	BRICK_WIDTH = 80
 	BRICK_HEIGHT = 30
@@ -66,6 +69,40 @@ def init(width, height):
 	init_bricks(5)
 	#run()
 
+
+def pause(window):
+	pause = True
+	while pause:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_c:
+					pause = False
+				elif event.key == pygame.K_q:
+					pygame.quit()
+					quit()
+
+		MYFONT = pygame.font.Font("res/FFF_font.ttf", 88)
+		MYFONT2 = pygame.font.Font("res/FFF_font.ttf", 30)
+		label = MYFONT.render("BrickBreaker", 100, RED)
+		label2 = MYFONT.render("Paused", 100, RED)
+		label3 = MYFONT2.render("press C to continue", 100, RED)
+		label4 = MYFONT2.render("press Q to quit", 100 , RED)
+		window.blit(label, (1, 50))
+		window.blit(label2, (50, 400))
+		window.blit(label3, (50, 500))
+		window.blit(label4, (50, 550))
+
+
+		
+
+
+		pygame.display.update()
+		CLOCK.tick(30)
+
+
 def run(window):
 
 	while True:
@@ -76,12 +113,13 @@ def run(window):
 		for event in pygame.event.get():
 	
 			if event.type == KEYDOWN:
-				keydown(event)
+				keydown(event, window)
 			if event.type == KEYUP:
 				keyup(event)
 			elif event.type == QUIT:
 				pygame.quit()
 				sys.exit()
+
 
 		pygame.display.update()
 		fps.tick(60)
@@ -109,12 +147,14 @@ def init_bricks(colmns):
 		for j in range(0, rows):
 			bricks.append(Brick(3, [j * 80 + x_offset, i * 30 + y_offset], [WIDTH, HEIGHT]))
 
-def keydown(event):
+def keydown(event, window):
 	global pad
 	if event.key == K_LEFT:
 		pad.vel += -WIDTH/(WIDTH/6)
 	elif event.key == K_RIGHT:
 		pad.vel += WIDTH/(WIDTH/6)
+	elif event.key == pygame.K_p:
+		pause(window)
 		
 	if debug == True:	
 		print("Pad Velocity:",pad.vel)
