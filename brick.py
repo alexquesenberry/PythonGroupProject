@@ -1,5 +1,6 @@
 import pygame
 import random as rand
+import os
 
 brick_colors = ["Red", "Blue", "Green", "Cyan", "Magenta", "Yellow"]
 
@@ -18,11 +19,11 @@ class Brick(object):
 
     def init_imgs(self, rand_int):
         color = brick_colors[rand_int]
-        self.img_arry.append(pygame.image.load("res/bricks/plain" + color + ".png").convert_alpha())
+        self.img_arry.append(pygame.image.load(os.path.dirname(os.path.abspath(__file__)) + "/res/bricks/plain" + color + ".png").convert_alpha())
         if self.durability > 1:
-            self.img_arry.append(pygame.image.load("res/bricks/onehit" + color + ".png").convert_alpha())
+            self.img_arry.append(pygame.image.load(os.path.dirname(os.path.abspath(__file__)) + "/res/bricks/onehit" + color + ".png").convert_alpha())
         if self.durability > 2:
-            self.img_arry.append(pygame.image.load("res/bricks/twohit" + color + ".png").convert_alpha())
+            self.img_arry.append(pygame.image.load(os.path.dirname(os.path.abspath(__file__)) + "/res/bricks/twohit" + color + ".png").convert_alpha())
 
     def set_brick(self, index):
         """sets the current brick"""
