@@ -51,8 +51,8 @@ def init(width, height):
 
 
 	bricks = []
-	BRICK_WIDTH = 80
-	BRICK_HEIGHT = 30
+	BRICK_WIDTH = HEIGHT/10
+	BRICK_HEIGHT = WIDTH/20
 
 	debug = False
 
@@ -179,7 +179,7 @@ def keyup(event):
 			balls[0].vel[0] = pad.vel
 	if event.key == K_SPACE:
 		if balls[0].vel[0] == 0 and balls[0].vel[1] == 0:
-			balls[0].vel[1] = float(-HEIGHT/200)
+			balls[0].vel[1] = float(-HEIGHT/150)
 			balls[0].vel[0] = float(-balls[0].vel[1]/4)
 
 	if debug == True:
@@ -199,8 +199,8 @@ def draw(canvas):
 	pygame.draw.line(canvas, GOLD, [0, 0], [WIDTH, 0], HEIGHT/5) #top
 
 	#draws the bricks
-	for brck in bricks:
-		brck.draw_brick(canvas)
+	for brk in bricks:
+		brk.draw_brick(canvas)
 
 	# Draws Paddle
 	pygame.draw.polygon(canvas, GREEN, [	[pad.pos[0] - PAD_WIDTH/2, pad.pos[1] - PAD_HEIGHT/2], 
@@ -217,13 +217,13 @@ def draw(canvas):
 
 
 	# Draws Balls
-	i = 0	#replace with for loop, that iterates all over balls list
-	pygame.draw.circle(canvas, SILVER, balls[i].pos, balls[i].radius, 0)
+	ball = balls[0]	#replace with for loop, that iterates all over balls list
+	pygame.draw.circle(canvas, SILVER, ball.pos, ball.radius, 0)
 
 	# Update Ball
-	balls[i].pos[0] += int(balls[i].vel[0])
-	balls[i].pos[1] += int(balls[i].vel[1])
-	vel_vect = (balls[i].vel[0]**2 + balls[i].vel[1]**2)**(0.5)
+	ball.pos[0] += int(ball.vel[0])
+	ball.pos[1] += int(ball.vel[1])
+	vel_vect = (ball.vel[0]**2 + ball.vel[1]**2)**(0.5)
 	if vel_vect < 4:
 		vel_vect = 4
 	elif vel_vect > 8:
@@ -231,55 +231,90 @@ def draw(canvas):
 
 
 	# Wall Collision 
-	if balls[i].pos[0] <= WIDTH/20 + balls[i].radius:	# left
-		balls[i].vel[0] = -balls[i].vel[0]
-	if balls[i].pos[0] >= WIDTH - WIDTH/20:			# right
-		balls[i].vel[0] = -balls[i].vel[0]
-	if balls[i].pos[1] <= HEIGHT/10 + balls[i].radius:	# top
-		balls[i].vel[1] = -balls[i].vel[1]
+	if ball.pos[0] <= WIDTH/20 + ball.radius:	# left
+		ball.vel[0] = -ball.vel[0]
+	if ball.pos[0] >= WIDTH - WIDTH/20:			# right
+		ball.vel[0] = -ball.vel[0]
+	if ball.pos[1] <= HEIGHT/10 + ball.radius:	# top
+		ball.vel[1] = -ball.vel[1]
 
 	# Pad Collision
-	if (balls[i].pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and balls[i].pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (balls[i].pos[0] >= pad.pos[0] - PAD_WIDTH/2 and balls[i].pos[0] <= pad.pos[0] + PAD_WIDTH/2):	# Hits Top of Pad
-		balls[i].pos[1] = pad.pos[1] - PAD_HEIGHT/2
+	if (ball.pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and ball.pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (ball.pos[0] >= pad.pos[0] - PAD_WIDTH/2 and ball.pos[0] <= pad.pos[0] + PAD_WIDTH/2):	# Hits Top of Pad
+		ball.pos[1] = pad.pos[1] - PAD_HEIGHT/2
 		
 		
-		AoD = math.acos((float(balls[i].pos[0]) - float(pad.pos[0]))/(PAD_WIDTH/2))
+		AoD = math.acos((float(ball.pos[0]) - float(pad.pos[0]))/(PAD_WIDTH/2))
 		Y_vel = math.sin(AoD) * -vel_vect
 		X_vel = math.cos(AoD) * vel_vect
 
-		balls[i].vel[1] = Y_vel * 1.05
-		balls[i].vel[0] = X_vel * 1.05
+		ball.vel[1] = Y_vel * 1.05
+		ball.vel[0] = X_vel * 1.05
 
 
 
 		if debug == True:
 
-			print("%i : %.2f : %.2f : %.2f" % (math.degrees(AoD), X_vel, Y_vel, vel_vect))
-
-			#elif contact_frac == 0:
-			#	balls[i].vel[1] = -vel_vect
-				#balls[i].vel[0] = 0
-				
-			#balls[i].vel[1] = -balls[i].vel[1]
+			#print("%i : %.2f : %.2f : %.2f" % (math.degrees(AoD), X_vel, Y_vel, vel_vect))	
+			#ball.vel[1] = -ball.vel[1]
 			#pad.pos[0] = pad.pos[0] - PAD_WIDTH/18
 			None
 
 
 
 	# Pad Buffers
-	elif (balls[i].pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and balls[i].pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (balls[i].pos[0] >= pad.pos[0] - PAD_WIDTH/2 - math.fabs(balls[i].vel[0])*3 + pad.vel and balls[i].pos[0] <= pad.pos[0] - PAD_WIDTH/2):	# Hits Side of Pad Left
-		balls[i].vel[0] = -balls[i].vel[0]
-		balls[i].vel[1] = 5
+	elif (ball.pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and ball.pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (ball.pos[0] >= pad.pos[0] - PAD_WIDTH/2 - math.fabs(ball.vel[0])*3 + pad.vel and ball.pos[0] <= pad.pos[0] - PAD_WIDTH/2):	# Hits Side of Pad Left
+		ball.vel[0] = -ball.vel[0]
+		ball.vel[1] = 5
 		if debug == True:
 			print("hit left")
-	elif (balls[i].pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and balls[i].pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (balls[i].pos[0] >= pad.pos[0] + PAD_WIDTH/2 and balls[i].pos[0] <= pad.pos[0] + PAD_WIDTH/2 + math.fabs(balls[i].vel[0])*3):	# Hits Side of Pad Left
-		balls[i].vel[0] = -balls[i].vel[0]
-		balls[i].vel[1] = 5
+	elif (ball.pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and ball.pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (ball.pos[0] >= pad.pos[0] + PAD_WIDTH/2 and ball.pos[0] <= pad.pos[0] + PAD_WIDTH/2 + math.fabs(ball.vel[0])*3):	# Hits Side of Pad Left
+		ball.vel[0] = -ball.vel[0]
+		ball.vel[1] = 5
 		if debug == True:
 			print("hit right")
 	
+	# Brick Collision
+	for brk in bricks:
+		if (ball.pos[1] >= brk.pos[1] and ball.pos[1] <= brk.pos[1] + BRICK_HEIGHT):# and (ball.pos[0] >= brk.pos[0] and ball.pos[0] <= brk.pos[0] + BRICK_WIDTH):
+			if ball.pos[0] >= brk.pos[0] and ball.pos[0] <= brk.pos[0] + 4: # LEFT
+				ball.vel[0] = -ball.vel[0]
+				brk.increase_hit()
+				if brk.hit == brk.durability:
+					bricks.remove(brk)
+				break
+			elif ball.pos[0] <= brk.pos[0] + BRICK_WIDTH and ball.pos[0] >= brk.pos[0] + BRICK_WIDTH - 4: # RIGHT
+				ball.vel[0] = -ball.vel[0]
+				brk.increase_hit()
+				if brk.hit == brk.durability:
+					bricks.remove(brk)
+				break
+		if (ball.pos[0] >= brk.pos[0] and ball.pos[0] <= brk.pos[0] + BRICK_WIDTH):
+			if ball.pos[1] >= brk.pos[1] - 4 and ball.pos[1] <= brk.pos[1] + 4: # TOP
+				brk.increase_hit()
+				ball.vel[1] = -ball.vel[1]
+				if brk.hit == brk.durability:
+					bricks.remove(brk)
+				break
+			elif ball.pos[1] <= brk.pos[1] + BRICK_HEIGHT + 4 and ball.pos[1] >= brk.pos[1] + BRICK_HEIGHT - 4: # BOTTOM
+				ball.vel[1] = -ball.vel[1]
+				brk.increase_hit()
+				if brk.hit == brk.durability:
+					bricks.remove(brk)
+				break
+			#ball_init()
+			#ball.vel[1] = -ball.vel[1]
+			#break
+
+
+	if debug == True:	
+	#	for brk in bricks:
+	#		print(brk.pos)
+	#	pause(canvas)	
+		None
+
+	
 	# Ball Death
-	if balls[i].pos[1] >= HEIGHT: #pad.pos[1] - PAD_HEIGHT:	# Misses Pad
+	if ball.pos[1] >= HEIGHT:
 		ball_init()
 		pad.pos = [WIDTH/2, HEIGHT-HEIGHT/15]
 		if debug == True:
@@ -291,18 +326,28 @@ def draw(canvas):
 		# Hit box displays
 	if debug == True:
 		# Pad
-		pygame.draw.line(canvas, WHITE, [0, pad.pos[1] - PAD_HEIGHT/2], [WIDTH, pad.pos[1] - PAD_HEIGHT/2], 1) # Above
-		pygame.draw.line(canvas, WHITE, [0, pad.pos[1] + PAD_HEIGHT/2], [WIDTH, pad.pos[1] + PAD_HEIGHT/2], 1) # Bottom
-		pygame.draw.line(canvas, WHITE, [pad.pos[0] - PAD_WIDTH/2, 0], 	[pad.pos[0] - PAD_WIDTH/2, HEIGHT], 1) # Left Side
-		pygame.draw.line(canvas, WHITE, [pad.pos[0] + PAD_WIDTH/2, 0], 	[pad.pos[0] + PAD_WIDTH/2, HEIGHT], 1) # Right Side
+		#pygame.draw.line(canvas, WHITE, [0, pad.pos[1] - PAD_HEIGHT/2], [WIDTH, pad.pos[1] - PAD_HEIGHT/2], 1) # Above
+		#pygame.draw.line(canvas, WHITE, [0, pad.pos[1] + PAD_HEIGHT/2], [WIDTH, pad.pos[1] + PAD_HEIGHT/2], 1) # Bottom
+		#pygame.draw.line(canvas, WHITE, [pad.pos[0] - PAD_WIDTH/2, 0], 	[pad.pos[0] - PAD_WIDTH/2, HEIGHT], 1) # Left Side
+		#pygame.draw.line(canvas, WHITE, [pad.pos[0] + PAD_WIDTH/2, 0], 	[pad.pos[0] + PAD_WIDTH/2, HEIGHT], 1) # Right Side
 
 		# Pad Buffer
-		pygame.draw.line(canvas, BLUE, 	[pad.pos[0] - PAD_WIDTH/2 - math.fabs(balls[i].vel[0])*3,0], [pad.pos[0] - PAD_WIDTH/2 - math.fabs(balls[i].vel[0])*3,HEIGHT] , 1) # Left
-		pygame.draw.line(canvas, BLUE, 	[pad.pos[0] + PAD_WIDTH/2 + math.fabs(balls[i].vel[0])*3,0], [pad.pos[0] + PAD_WIDTH/2 + math.fabs(balls[i].vel[0])*3,HEIGHT] , 1) # Right
+		#pygame.draw.line(canvas, BLUE, 	[pad.pos[0] - PAD_WIDTH/2 - math.fabs(ball.vel[0])*3,0], [pad.pos[0] - PAD_WIDTH/2 - math.fabs(ball.vel[0])*3,HEIGHT] , 1) # Left
+		#pygame.draw.line(canvas, BLUE, 	[pad.pos[0] + PAD_WIDTH/2 + math.fabs(ball.vel[0])*3,0], [pad.pos[0] + PAD_WIDTH/2 + math.fabs(ball.vel[0])*3,HEIGHT] , 1) # Right
 
 		# Ball
-		pygame.draw.line(canvas, WHITE, [balls[i].pos[0], 0], [balls[i].pos[0], HEIGHT] , 1) # Vertical
-		pygame.draw.line(canvas, WHITE, [0, balls[i].pos[1]], [WIDTH, balls[i].pos[1]] , 1) # Horizontal
+		pygame.draw.line(canvas, WHITE, [ball.pos[0], 0], [ball.pos[0], HEIGHT] , 1) # Vertical
+		pygame.draw.line(canvas, WHITE, [0, ball.pos[1]], [WIDTH, ball.pos[1]] , 1) # Horizontal
+
+		# Bricks
+		for brk in bricks:
+
+			#pygame.draw.line(canvas, PURPLE, [brk.pos[0], 0], [brk.pos[0], HEIGHT] , 1) # left
+			#pygame.draw.line(canvas, PURPLE, [brk.pos[0] + BRICK_WIDTH, 0], [brk.pos[0] + BRICK_WIDTH, HEIGHT] , 1) # right
+			#pygame.draw.line(canvas, PURPLE, [0, brk.pos[1]], [WIDTH, brk.pos[1]], 1) # top
+			#pygame.draw.line(canvas, PURPLE, [0, brk.pos[1] + BRICK_HEIGHT], [WIDTH, brk.pos[1] + BRICK_HEIGHT], 1) # bottom
+			None
+
 
 
 
