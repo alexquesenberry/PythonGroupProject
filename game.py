@@ -5,7 +5,6 @@ import random
 import pygame, sys
 import math
 import bb_objs
-from brick import Brick
 from pygame.locals import *
 
 #pygame.init()
@@ -22,14 +21,7 @@ YELLOW = (237, 249, 57)
 PURPLE = (189, 26, 221)
 
 
-CLOCK = pygame.time.Clock()
 
-#BALL_RADIUS = math.sqrt(WIDTH*HEIGHT)
-#PAD_WIDTH = WIDTH/10
-#PAD_HEIGHT = HEIGHT/50
-#HALF_PAD_WIDTH = PAD_WIDTH/2
-#HALF_PAD_HEIGHT = PAD_HEIGHT/2
-#score=0
 
 #window = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 #pygame.display.set_caption('Brick Break')
@@ -40,68 +32,27 @@ def init(width, height):
 	global pad, score
 	global BALL_RADIUS, PAD_WIDTH, PAD_HEIGHT
 	global WIDTH, HEIGHT
-	global debug
-	global bricks
-	global BRICK_WIDTH, BRICK_HEIGHT
+
 
 	WIDTH = width
 	HEIGHT = height
 
 
 
-	bricks = []
-	BRICK_WIDTH = 80
-	BRICK_HEIGHT = 30
-
 	debug = False
 
 	BALL_RADIUS = math.sqrt(WIDTH*HEIGHT)
-	PAD_WIDTH = WIDTH/10
+	PAD_WIDTH = WIDTH/5
 	PAD_HEIGHT = HEIGHT/50
 	score=0
 
 	pygame.init()
 	fps = pygame.time.Clock()
 
-	pad = bb_objs.paddle(WIDTH/2, HEIGHT-HEIGHT/15, WIDTH/10, HEIGHT/50, GREEN)
+	pad = bb_objs.paddle(WIDTH/2, HEIGHT-HEIGHT/15, PAD_WIDTH, PAD_HEIGHT, GREEN)
 	score = 0
 	ball_init()
-	init_bricks(5)
 	#run()
-
-
-def pause(window):
-	pause = True
-	while pause:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				pygame.quit()
-				quit()
-			if event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_c:
-					pause = False
-				elif event.key == pygame.K_q:
-					pygame.quit()
-					quit()
-
-		MYFONT = pygame.font.Font("res/FFF_font.ttf", 88)
-		MYFONT2 = pygame.font.Font("res/FFF_font.ttf", 30)
-		label = MYFONT.render("BrickBreaker", 100, RED)
-		label2 = MYFONT.render("Paused", 100, RED)
-		label3 = MYFONT2.render("press C to continue", 100, RED)
-		label4 = MYFONT2.render("press Q to quit", 100 , RED)
-		window.blit(label, (1, 50))
-		window.blit(label2, (50, 400))
-		window.blit(label3, (50, 500))
-		window.blit(label4, (50, 550))
-
-
-		
-
-
-		pygame.display.update()
-		CLOCK.tick(30)
-
 
 def run(window):
 
@@ -113,13 +64,12 @@ def run(window):
 		for event in pygame.event.get():
 	
 			if event.type == KEYDOWN:
-				keydown(event, window)
+				keydown(event)
 			if event.type == KEYUP:
 				keyup(event)
 			elif event.type == QUIT:
 				pygame.quit()
 				sys.exit()
-
 
 		pygame.display.update()
 		fps.tick(60)
@@ -129,35 +79,23 @@ def ball_init():
 	balls = []
 	#init_vel = [-WIDTH/100, -HEIGHT/250]
 	init_vel = [0, 0]
-	if len(balls) > 0:
-		balls.pop()
-	balls.append(bb_objs.ball(WIDTH/2, HEIGHT/2, init_vel, PAD_WIDTH/15, SILVER))
+	#if len(balls) > 0:
+	#	balls.pop()
+	balls.append(bb_objs.ball(WIDTH/2 - PAD_WIDTH/6, HEIGHT/2, init_vel, PAD_WIDTH/15, SILVER))
 	#balls.append(bb_objs.ball(WIDTH/4,  HEIGHT-HEIGHT/15, init_vel, PAD_WIDTH/15, SILVER))	#Test Ball
 	
-def init_bricks(colmns):
-	"""
-	pass in the number of columns
-	you want initially drawn		
-	"""
-	rows = (WIDTH - 2 * WIDTH / 10) / BRICK_WIDTH
-	x_offset = WIDTH / 10
-	y_offset = HEIGHT / 7
+	
 
-	for i in range(0, colmns):
-		for j in range(0, rows):
-			bricks.append(Brick(3, [j * 80 + x_offset, i * 30 + y_offset], [WIDTH, HEIGHT]))
-
-def keydown(event, window):
+def keydown(event):
 	global pad
 	if event.key == K_LEFT:
 		pad.vel += -WIDTH/(WIDTH/6)
 	elif event.key == K_RIGHT:
 		pad.vel += WIDTH/(WIDTH/6)
-	elif event.key == pygame.K_p:
-		pause(window)
 		
 	if debug == True:	
-		print("Pad Velocity:",pad.vel)
+		#print("Pad Velocity:",pad.vel)
+		None
 
 
 def keyup(event):
@@ -176,10 +114,11 @@ def keyup(event):
 	if event.key == K_SPACE:
 		if balls[0].vel[0] == 0 and balls[0].vel[1] == 0:
 			balls[0].vel[1] = HEIGHT/200
-		None
+
 
 	if debug == True:
-		print(pad.vel)
+		#print(pad.vel)
+		None
 
 
 def draw(canvas):
@@ -192,10 +131,6 @@ def draw(canvas):
 	pygame.draw.line(canvas, RED, [WIDTH, 0], [WIDTH, HEIGHT], WIDTH/10) #right
 	pygame.draw.line(canvas, RED, [0, 0], [0, HEIGHT], WIDTH/10) #left
 	pygame.draw.line(canvas, RED, [0, 0], [WIDTH, 0], HEIGHT/5) #top
-
-	#draws the bricks
-	for brck in bricks:
-		brck.draw_brick(canvas)
 
 	# Draws Paddle
 	pygame.draw.polygon(canvas, GREEN, [	[pad.pos[0] - PAD_WIDTH/2, pad.pos[1] - PAD_HEIGHT/2], 
@@ -218,6 +153,13 @@ def draw(canvas):
 	# Update Ball
 	balls[i].pos[0] += int(balls[i].vel[0])
 	balls[i].pos[1] += int(balls[i].vel[1])
+	vel_vect = (balls[i].vel[0]**2 + balls[i].vel[1]**2)**(0.5)
+	if vel_vect < 4:
+		vel_vect = 4
+	elif vel_vect > 8:
+		vel_vect = 8
+		
+	
 
 	# Wall Collision 
 	if balls[i].pos[0] <= WIDTH/20 + balls[i].radius:	# left
@@ -229,26 +171,38 @@ def draw(canvas):
 
 	# Pad Collision
 	if (balls[i].pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and balls[i].pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (balls[i].pos[0] >= pad.pos[0] - PAD_WIDTH/2 and balls[i].pos[0] <= pad.pos[0] + PAD_WIDTH/2):	# Hits Top of Pad
+		balls[i].pos[1] = pad.pos[1] - PAD_HEIGHT/2
 		if debug == True:
-			vel_vect = (balls[i].vel[0]**2 + balls[i].vel[1]**2)**(0.5)
-			contact_frac = (float(balls[i].pos[0]) - float(pad.pos[0]))/(PAD_WIDTH/2)
+			contact_frac = (float(balls[i].pos[0]) - float(pad.pos[0]))/(PAD_WIDTH)
 
-			if contact_frac < 0:
-				balls[i].vel[0] = math.ceil(math.sin(math.pi * contact_frac) * vel_vect * 1)
-				balls[i].vel[1] = math.ceil(math.cos(math.pi * contact_frac) * vel_vect * 1)
-			elif contact_frac > 0:
-				balls[i].vel[0] = math.floor(math.sin(math.pi * contact_frac) * vel_vect * 1)
-				balls[i].vel[1] = math.floor(math.cos(math.pi * contact_frac) * vel_vect * 1)
+#
+# cos(-) = ball_pos - pad_pos / (pad_width/2) = angle of deflection
+# sin(AoD) * vel_vec = Y_vel
+# cos(AoD) * vel_vec = X_vel
+
+
+
+			if contact_frac > 0:
+				balls[i].vel[1] = -math.sin(math.pi * contact_frac) * vel_vect * 1.05
+				balls[i].vel[0] = math.cos(math.pi * contact_frac) * vel_vect * 1.05
+			elif contact_frac < 0:
+				balls[i].vel[1] = math.sin(math.pi * contact_frac) * vel_vect * 1.05
+				balls[i].vel[0] = -math.cos(math.pi * contact_frac) * vel_vect * 1.05
 			elif contact_frac == 0:
-				balls[i].vel[1] = -balls[i].vel[1]
-			
+				balls[i].vel[1] = -vel_vect * 1.05
+				#balls[i].vel[0] = 0
 
-			print(balls[i].vel[0], balls[i].vel[1], vel_vect)
+
+
+			print(contact_frac)
+			print(math.sin(math.pi * contact_frac), math.cos(math.pi * contact_frac), sep=' : ')
+			print('X:',balls[i].vel[0], '\tY:', balls[i].vel[1], '\tVec:', vel_vect)
 			#print('X:', math.sin(math.pi * contact_frac))
 			#print('Y:', math.cos(math.pi * contact_frac))
 		else: 
 			balls[i].vel[1] = -balls[i].vel[1]
 
+	# Pad Buffers
 	elif (balls[i].pos[1] >= pad.pos[1] - PAD_HEIGHT/2 and balls[i].pos[1] <= pad.pos[1] + PAD_HEIGHT/2) and (balls[i].pos[0] >= pad.pos[0] - PAD_WIDTH/2 - math.fabs(balls[i].vel[0])*3 + pad.vel and balls[i].pos[0] <= pad.pos[0] - PAD_WIDTH/2):	# Hits Side of Pad Left
 		balls[i].vel[0] = -balls[i].vel[0]
 		balls[i].vel[1] = 5
@@ -261,7 +215,7 @@ def draw(canvas):
 			print("hit right")
 	
 	# Ball Death
-	if balls[i].pos[1] >= HEIGHT: #pad.pos[1] - PAD_HEIGHT:	# Misses Pad
+	if balls[i].pos[1] >= HEIGHT: #Misses Pad
 		ball_init()
 		pad.pos = [WIDTH/2, HEIGHT-HEIGHT/15]
 		if debug == True:
