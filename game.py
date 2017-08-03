@@ -199,11 +199,21 @@ def draw(canvas):
 
 
 	canvas.fill(BLACK)
+
 	
 	# Drawns the white borders
 	pygame.draw.line(canvas, GOLD, [WIDTH, 0], [WIDTH, HEIGHT], WIDTH/10) #right
 	pygame.draw.line(canvas, GOLD, [0, 0], [0, HEIGHT], WIDTH/10) #left
 	pygame.draw.line(canvas, GOLD, [0, 0], [WIDTH, 0], HEIGHT/5) #top
+
+	# Displays Score
+	MYFONT = pygame.font.Font("res/FFF_font.ttf", 30)
+	label = MYFONT.render("Score: " + str(score), 100, RED)
+	canvas.blit(label, (50, 50))
+
+	MYFONT = pygame.font.Font("res/FFF_font.ttf", 30)
+	label2 = MYFONT.render("Lives: " + str(lives), 100, RED)
+	canvas.blit(label2, (WIDTH - 150, 45))
 
 	#draws the bricks
 	for brk in bricks:
@@ -240,7 +250,7 @@ def draw(canvas):
 	# Wall Collision 
 	if ball.pos[0] <= WIDTH/20 + ball.radius:	# left
 		ball.vel[0] = -ball.vel[0]
-	if ball.pos[0] >= WIDTH - WIDTH/20:			# right
+	if ball.pos[0] >= WIDTH - WIDTH/20:		# right
 		ball.vel[0] = -ball.vel[0]
 	if ball.pos[1] <= HEIGHT/10 + ball.radius:	# top
 		ball.vel[1] = -ball.vel[1]
@@ -309,6 +319,7 @@ def draw(canvas):
 				if brk.hit == brk.durability:
 					score += 100 * score_multi
 					score_multi += 0.1
+					print(score , score_multi)
 					bricks.remove(brk)
 				break
 			#ball_init()
@@ -330,7 +341,7 @@ def draw(canvas):
 		lives -= 1
 		score_multi = 1
 		if debug == True:
-			print(score)
+			print(lives)
 			print("DEAD")
 		
 
