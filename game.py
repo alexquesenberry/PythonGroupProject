@@ -101,25 +101,53 @@ def pause(window):
 		window.blit(label3, (50, 500))
 		window.blit(label4, (50, 550))
 
+		pygame.display.update()
+		CLOCK.tick(30)
 
-		
+def game_over(window):
+	youLose = True
+	while youLose:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()				
+				quit()
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_p:
+					pass
+				#HERE WE WANT TO RESTART THE GAME
+				elif event.key == pygame.K_q:
+					pygame.quit()
+					running == False
+					return
 
+		MYFONT = pygame.font.Font("res/FFF_font.ttf", 88)
+		MYFONT2 = pygame.font.Font("res/FFF_font.ttf", 30)
+		label = MYFONT.render("BrickBreaker", 100, RED)
+		label2 = MYFONT.render("Game Over", 100, RED)
+		label3 = MYFONT2.render("press P to play again", 100, RED)
+		label4 = MYFONT2.render("press q to quit", 100, RED)
+		label5 = MYFONT2.render("YOUR SCORE: " + str(score), 100, RED)
+		window.blit(label, (1, 50))
+		window.blit(label2, (50, 400))
+		window.blit(label5, (50, 500))
+		window.blit(label3, (50, 550))
+		window.blit(labelc4, (50, 600))
 
 		pygame.display.update()
 		CLOCK.tick(30)
 
 
+
+
 def run(window):
-	global running
+	global running, lives
 
 	running = True
 	while running:
 
 		draw(window)
-	
 
 		for event in pygame.event.get():
-	
 			if event.type == KEYDOWN:
 				keydown(event, window)
 			if event.type == KEYUP:
@@ -127,7 +155,8 @@ def run(window):
 			elif event.type == QUIT:
 				pygame.quit()
 				sys.exit()
-
+		if lives == 0:
+			game_over(window)
 
 		pygame.display.update()
 		fps.tick(60)
