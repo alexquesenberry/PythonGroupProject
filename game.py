@@ -107,6 +107,7 @@ def pause(window):
 
 def game_over(window):
 	scoredb.save_score()
+	global lives, score
 	youLose = True
 	while youLose:
 		for event in pygame.event.get():
@@ -115,7 +116,11 @@ def game_over(window):
 				quit()
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_p:
-					pass
+					lives = 3
+					score = 0
+					del bricks[:]
+					init_bricks(5)
+					youLose = False
 				#HERE WE WANT TO RESTART THE GAME
 				elif event.key == pygame.K_q:
 					pygame.quit()
@@ -351,7 +356,7 @@ def draw(canvas):
 					score += 100 * score_multi
 					scoredb.add_to_score(100,score_multi)
 					score_multi += 0.1
-					print(score , score_multi)
+					#print(score , score_multi)
 					bricks.remove(brk)
 				break
 			#ball_init()
