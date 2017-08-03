@@ -4,6 +4,7 @@ from __future__ import print_function
 import random
 import pygame, sys
 import math
+from scores import Scores
 import bb_objs
 from brick import Brick
 from pygame.locals import *
@@ -24,7 +25,7 @@ GOLD = (206,184,136)
 
 
 CLOCK = pygame.time.Clock()
-
+scoredb = Scores()
 #BALL_RADIUS = math.sqrt(WIDTH*HEIGHT)
 #PAD_WIDTH = WIDTH/10
 #PAD_HEIGHT = HEIGHT/50
@@ -105,6 +106,7 @@ def pause(window):
 		CLOCK.tick(30)
 
 def game_over(window):
+	scoredb.save_score()
 	youLose = True
 	while youLose:
 		for event in pygame.event.get():
@@ -131,7 +133,7 @@ def game_over(window):
 		window.blit(label2, (50, 400))
 		window.blit(label5, (50, 500))
 		window.blit(label3, (50, 550))
-		window.blit(labelc4, (50, 600))
+		window.blit(label4, (50, 600))
 
 		pygame.display.update()
 		CLOCK.tick(30)
@@ -347,6 +349,7 @@ def draw(canvas):
 				brk.increase_hit()
 				if brk.hit == brk.durability:
 					score += 100 * score_multi
+					scoredb.add_to_score(100,score_multi)
 					score_multi += 0.1
 					print(score , score_multi)
 					bricks.remove(brk)

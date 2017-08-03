@@ -18,7 +18,7 @@ class Scores(object):
         """
         self.curr_score += amt * mul
 
-    def save_score(self, name=""):
+    def save_score(self, name="Player1"):
         """ method saves score to db 
             name == name of user
         """
@@ -33,7 +33,7 @@ class Scores(object):
         scores = fetchAllSQL(sql)
         return scores
 
-    def get_scores_for_user(self, name=""):
+    def get_scores_for_user(self, name="Player1"):
         """ method returns user scores 
             name == name of user
         """
@@ -44,7 +44,7 @@ class Scores(object):
     def get_top_ten_scores(self):
         """ method returns top 10 high scores """
         scores = self.get_all_scores_and_names();
-        scores.sort(key=lambda x: x[1], reverse=True)
+        scores.sort(key=lambda x: x[0], reverse=True)
         return scores[:10]
 
     def reset_score(self):
