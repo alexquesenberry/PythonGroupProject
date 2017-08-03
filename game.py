@@ -4,7 +4,6 @@ from __future__ import print_function
 import random
 import pygame, sys
 import math
-from scores import Scores
 import bb_objs
 from brick import Brick
 from pygame.locals import *
@@ -25,7 +24,7 @@ GOLD = (206,184,136)
 
 
 CLOCK = pygame.time.Clock()
-scoredb = Scores()
+
 #BALL_RADIUS = math.sqrt(WIDTH*HEIGHT)
 #PAD_WIDTH = WIDTH/10
 #PAD_HEIGHT = HEIGHT/50
@@ -85,10 +84,11 @@ def pause(window):
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_c:
 					pause = False
+					return True
 				elif event.key == pygame.K_q:
-					pygame.quit()
-					running = False
-					return
+					#pygame.quit()
+					return False
+					
 					
 
 		MYFONT = pygame.font.Font("res/FFF_font.ttf", 88)
@@ -106,7 +106,6 @@ def pause(window):
 		CLOCK.tick(30)
 
 def game_over(window):
-	scoredb.save_score()
 	global lives, score
 	youLose = True
 	while youLose:
@@ -121,11 +120,11 @@ def game_over(window):
 					del bricks[:]
 					init_bricks(5)
 					youLose = False
+					return True
 				#HERE WE WANT TO RESTART THE GAME
 				elif event.key == pygame.K_q:
-					pygame.quit()
-					running == False
-					return
+					#pygame.quit()
+					return False
 
 		MYFONT = pygame.font.Font("res/FFF_font.ttf", 88)
 		MYFONT2 = pygame.font.Font("res/FFF_font.ttf", 30)
@@ -154,6 +153,9 @@ def run(window):
 
 		draw(window)
 
+		pygame.display.update()
+		fps.tick(60)
+
 		for event in pygame.event.get():
 			if event.type == KEYDOWN:
 				keydown(event, window)
@@ -163,10 +165,13 @@ def run(window):
 				pygame.quit()
 				sys.exit()
 		if lives == 0:
-			game_over(window)
+			running = game_over(window)
+	return
 
-		pygame.display.update()
-		fps.tick(60)
+		#pygame.display.update()
+		#fps.tick(60)
+
+		
 
 def ball_init():
 	global balls
@@ -192,7 +197,7 @@ def init_bricks(colmns):
 			bricks.append(Brick(3, [j * 80 + x_offset, i * 30 + y_offset], [WIDTH, HEIGHT]))
 
 def keydown(event, window):
-	global pad
+	global pad, running
 	if event.key == K_LEFT:
 		pad.vel += -WIDTH/(WIDTH/6)
 		if balls[0].vel[1] == 0:
@@ -203,6 +208,7 @@ def keydown(event, window):
 			balls[0].vel[0] = pad.vel
 	elif event.key == pygame.K_p:
 		pause(window)
+		running = False
 		
 	if debug == True:	
 		#print("Pad Velocity:",pad.vel)
@@ -354,7 +360,6 @@ def draw(canvas):
 				brk.increase_hit()
 				if brk.hit == brk.durability:
 					score += 100 * score_multi
-					scoredb.add_to_score(100,score_multi)
 					score_multi += 0.1
 					#print(score , score_multi)
 					bricks.remove(brk)
