@@ -30,7 +30,8 @@ CLOCK = pygame.time.Clock()
 #PAD_HEIGHT = HEIGHT/50
 #HALF_PAD_WIDTH = PAD_WIDTH/2
 #HALF_PAD_HEIGHT = PAD_HEIGHT/2
-#score=0
+score=0
+score_multi = 1
 
 #window = pygame.display.set_mode((WIDTH, HEIGHT), 0, 32)
 #pygame.display.set_caption('Brick Break')
@@ -38,11 +39,11 @@ CLOCK = pygame.time.Clock()
 
 def init(width, height):
 	global fps
-	global pad, score
+	global lives
 	global BALL_RADIUS, PAD_WIDTH, PAD_HEIGHT
 	global WIDTH, HEIGHT
 	global debug
-	global bricks
+	global bricks, pad
 	global BRICK_WIDTH, BRICK_HEIGHT
 
 	WIDTH = width
@@ -60,6 +61,8 @@ def init(width, height):
 	PAD_WIDTH = WIDTH/5
 	PAD_HEIGHT = HEIGHT/50
 	score=0
+	score_multi = 1.0
+	lives = 3
 
 	pygame.init()
 	fps = pygame.time.Clock()
@@ -83,7 +86,9 @@ def pause(window):
 					pause = False
 				elif event.key == pygame.K_q:
 					pygame.quit()
-					quit()
+					running = False
+					return
+					
 
 		MYFONT = pygame.font.Font("res/FFF_font.ttf", 88)
 		MYFONT2 = pygame.font.Font("res/FFF_font.ttf", 30)
@@ -105,8 +110,10 @@ def pause(window):
 
 
 def run(window):
+	global running
 
-	while True:
+	running = True
+	while running:
 
 		draw(window)
 	
@@ -188,8 +195,8 @@ def keyup(event):
 
 
 def draw(canvas):
+	global score, score_multi, lives
 
-	global pad, balls, score
 
 	canvas.fill(BLACK)
 	
@@ -247,6 +254,7 @@ def draw(canvas):
 		Y_vel = math.sin(AoD) * -vel_vect
 		X_vel = math.cos(AoD) * vel_vect
 
+
 		ball.vel[1] = Y_vel * 1.05
 		ball.vel[0] = X_vel * 1.05
 
@@ -299,6 +307,8 @@ def draw(canvas):
 				ball.vel[1] = -ball.vel[1]
 				brk.increase_hit()
 				if brk.hit == brk.durability:
+					score += 100 * score_multi
+					score_multi += 0.1
 					bricks.remove(brk)
 				break
 			#ball_init()
@@ -317,7 +327,10 @@ def draw(canvas):
 	if ball.pos[1] >= HEIGHT:
 		ball_init()
 		pad.pos = [WIDTH/2, HEIGHT-HEIGHT/15]
+		lives -= 1
+		score_multi = 1
 		if debug == True:
+			print(score)
 			print("DEAD")
 		
 
@@ -336,8 +349,8 @@ def draw(canvas):
 		#pygame.draw.line(canvas, BLUE, 	[pad.pos[0] + PAD_WIDTH/2 + math.fabs(ball.vel[0])*3,0], [pad.pos[0] + PAD_WIDTH/2 + math.fabs(ball.vel[0])*3,HEIGHT] , 1) # Right
 
 		# Ball
-		pygame.draw.line(canvas, WHITE, [ball.pos[0], 0], [ball.pos[0], HEIGHT] , 1) # Vertical
-		pygame.draw.line(canvas, WHITE, [0, ball.pos[1]], [WIDTH, ball.pos[1]] , 1) # Horizontal
+		#pygame.draw.line(canvas, WHITE, [ball.pos[0], 0], [ball.pos[0], HEIGHT] , 1) # Vertical
+		#pygame.draw.line(canvas, WHITE, [0, ball.pos[1]], [WIDTH, ball.pos[1]] , 1) # Horizontal
 
 		# Bricks
 		for brk in bricks:
