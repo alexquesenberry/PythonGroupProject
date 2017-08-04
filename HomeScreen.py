@@ -163,7 +163,7 @@ if __name__ == "__main__":
     click_sound = pygame.mixer.Sound("res/beep5.mp3")
     pygame.mixer.music.load(os.path.abspath("res/background_music.wav"))
     pygame.mixer.music.set_volume(10)
-    pygame.mixer.music.play()
+    pygame.mixer.music.play(-1)
     size = (WIDTH, HEIGHT)
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("BRICK BREAKER")
