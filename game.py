@@ -3,6 +3,7 @@
 from __future__ import print_function
 import random
 import pygame, sys
+from scores import Scores
 import math
 import bb_objs
 from brick import Brick
@@ -24,7 +25,7 @@ GOLD = (206,184,136)
 
 
 CLOCK = pygame.time.Clock()
-
+scoredb = Scores()
 #BALL_RADIUS = math.sqrt(WIDTH*HEIGHT)
 #PAD_WIDTH = WIDTH/10
 #PAD_HEIGHT = HEIGHT/50
@@ -106,6 +107,7 @@ def pause(window):
 		CLOCK.tick(30)
 
 def game_over(window):
+	scoredb.save_score()
 	global lives, score
 	youLose = True
 	while youLose:
@@ -194,7 +196,7 @@ def init_bricks(colmns):
 
 	for i in range(0, colmns):
 		for j in range(0, rows):
-			bricks.append(Brick(3, [j * 80 + x_offset, i * 30 + y_offset], [WIDTH, HEIGHT]))
+			bricks.append(Brick(random.randint(1,3), [j * 80 + x_offset, i * 30 + y_offset], [WIDTH, HEIGHT]))
 
 def keydown(event, window):
 	global pad, running
@@ -360,6 +362,7 @@ def draw(canvas):
 				brk.increase_hit()
 				if brk.hit == brk.durability:
 					score += 100 * score_multi
+					scoredb.add_to_score(100, score_multi)
 					score_multi += 0.1
 					#print(score , score_multi)
 					bricks.remove(brk)

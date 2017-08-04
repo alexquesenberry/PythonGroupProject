@@ -8,8 +8,11 @@ description:
 from __future__ import print_function
 from LevelScreen import LevelScreen
 from ScoresScreen import ScoresScreen
+import dbconfig
 import pygame
 import game
+import os
+import time
 
 
 BUTTON_COLOR = (163, 40, 55)
@@ -138,8 +141,7 @@ class HomeScreen(object):
         label5 = my_font.render("EXIT", 1, BUTTON_TEXT_COLOR)
         self.screen.blit(label1, (CENTER_SCREEN - 52, 315))  # play now
         self.screen.blit(label2, (CENTER_SCREEN - 40, 415))  # levels
-        self.screen.blit(label3, (CENTER_SCREEN - 50, 515)
-                         )  # extreme play mode
+        self.screen.blit(label3, (CENTER_SCREEN - 50, 515))  # extreme play mode
         self.screen.blit(label4, (CENTER_SCREEN - 67, 615))  # scores
         self.screen.blit(label5, (CENTER_SCREEN - 33, 715))  # exit
     # END ADD_TEXT_BUTTONS
@@ -155,13 +157,13 @@ class HomeScreen(object):
 
 
 if __name__ == "__main__":
-    pygame.mixer.init()
-    pygame.mixer.pre_init(44100, -16, 2, 2048)
+    pygame.mixer.pre_init(44100, -16, 2, 2048) # setup mixer to avoid sound lag
     pygame.init()
-    click_sound = pygame.mixer.Sound("res/beep5.mps")
-    pygame.mixer.music.load("res/background_music.mp3")
-    pygame.mixer.music.set_volume(1)
-    pygame.mixer.music.play(-1)
+    pygame.mixer.init()
+    click_sound = pygame.mixer.Sound("res/beep5.mp3")
+    pygame.mixer.music.load(os.path.abspath("res/background_music.wav"))
+    pygame.mixer.music.set_volume(10)
+    pygame.mixer.music.play()
     size = (WIDTH, HEIGHT)
     screen = pygame.display.set_mode(size)
     pygame.display.set_caption("BRICK BREAKER")
