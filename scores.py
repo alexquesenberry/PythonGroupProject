@@ -1,5 +1,7 @@
 import sqlite3
 from dbconfig import NAME_COL, SCORE_COL, HIGHSCORES_TABLE_NAME, fetchAllSQL, executeSQL
+import random
+import time
 
 class Scores(object):
     """ service class that offer abunch of db services 

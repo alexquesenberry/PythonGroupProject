@@ -1,6 +1,6 @@
 import pygame
 from scores import Scores
-from game import RED
+from game import BLACK
 
 class ScoresScreen(object):
     def __init__(self, screen, width, height):
@@ -38,7 +38,7 @@ class ScoresScreen(object):
 
         pygame.font.init()
         myfont = pygame.font.SysFont("monospace", 72)
-        hslabel = myfont.render("HIGHSCORES", 1, RED)
+        hslabel = myfont.render("HIGHSCORES", 1, BLACK)
         myfont = pygame.font.SysFont("monospace", 24)
         bcklabel = myfont.render("BACK", 1, (0,0,0))
         text_rect = hslabel.get_rect(center=(self.width/2, 30))
@@ -46,7 +46,7 @@ class ScoresScreen(object):
         self.screen.blit(hslabel, text_rect)
         self.screen.blit(bcklabel, (self.width/2 - 33, 715))
 
-        pygame.draw.line(self.screen, RED, (0,60),(600,60), 5)
+        pygame.draw.line(self.screen, BLACK, (0,60),(600,60), 5)
 
         top = 100
         labels = []
@@ -54,11 +54,11 @@ class ScoresScreen(object):
         j = len(topten)
         myfont = pygame.font.SysFont("monospace", 32)
         for record in topten:
-            labels.insert(i,myfont.render('{0}. {1: <55s}{2: <10d}'.format(i+1, record[1], record[0]), 0, RED))
+            labels.insert(i,myfont.render('{0}.{1: <55s}{2: >10s}'.format(i+1, str(record[1]).strip(), str(record[0]).strip()).replace(" ", "."), 0, BLACK))
             i = i + 1
 
         for label in labels:
-            self.screen.blit(label, (70, top))
+            self.screen.blit(label, (50, top))
             top = top + 35
 
         pygame.display.flip()
